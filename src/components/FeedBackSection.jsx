@@ -1,15 +1,48 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Button from "./Button/Button"
 
-export default function FeedBackSection() {
+function StateVsRf() {
+    const input = useRef()
+    const [val, setVal] = useState(false)
 
-    const [name, setName] = useState('');
-    const [reason, setReason] = useState('help')
-    const [hasError, sethasError] = useState(false)
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            setVal(true)
+        }
+    }
+
+    return (
+        <div>
+            <h3>Input value: {val && input.current.value}</h3>
+            <input type="text" className="control" 
+            ref={input} onKeyDown={handleKeyDown}
+            />
+        </div>
+    
+    )
+    
+}
+
+
+export default function FeedBackSection() {
+    const [form, setForm] = useState({
+        name: '',
+        hasError: false,
+        reason: 'help'
+    })
+    // const [name, setName] = useState('');
+    // const [reason, setReason] = useState('help')
+    // const [hasError, sethasError] = useState(false)
 
     function handleNameChange(event) {
-        setName(event.target.value)
-        sethasError(event.target.value.trim().length === 0)
+        // setName()
+        // sethasError(event.target.value.trim().length === 0)
+        setForm((prev) => ({
+            ...prev,
+            name: event.target.value,
+            hasError: event.target.value.trim().length === 0
+        })
+        )
     }
 
 
@@ -23,25 +56,27 @@ export default function FeedBackSection() {
                     className="control" 
                     type="text" 
                     id="name" 
-                    value={name} 
+                    value={form.name} 
                     style={{
-                        border: hasError ? '1px solid red' : null,
+                        border: form.hasError ? '1px solid red' : null,
                       }}
                     onChange={handleNameChange}
                 />
 
                 <label htmlFor="reason">Причина обращения</label>
-                <select id="reason" className="control" value={reason} onChange={event => setReason(event.target.value)}>
+                <select id="reason" className="control" value={form.reason} onChange={event => setForm((prev) => ({...prev, reason: event.target.value}))}>
                     <option value="error">Ошибка</option>
                     <option value="help">Нужна помощь</option>
                     <option value="suggest">Предложение</option>
                 </select>
 
-                <Button disabled={hasError}>
+                <Button disabled={form.hasError}>
                 Отправить
                 </Button>
 
             </form>
+
+            <StateVsRf />
         </section>
         
     )

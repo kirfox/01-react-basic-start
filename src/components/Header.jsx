@@ -1,11 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from '/logo-name.svg'
 
 
 export default function Header() {
     const [date, setNewDate] = useState(new Date())
+    useEffect(() => {
+      const interval = setInterval(() => setNewDate(new Date()), 1000)
+
+      return() => {
+        clearInterval(interval)
+      }
+    }, [])
     
-    setInterval(() => setNewDate(new Date()), 1000)
     
     return(
       <header>
